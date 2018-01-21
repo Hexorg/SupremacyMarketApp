@@ -1,5 +1,6 @@
 package com.hexorg.SupremacyServer;
 
+import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Title;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.shared.ui.ContentMode;
@@ -9,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 
 @SpringUI
 @Title("Supremacy Market Server")
+@Push
 public class MainUI extends UI implements MessageListener {
     private Label turnLabel, phaseLabel, mineralPriceLabel, oilPriceLabel, grainPriceLabel;
 
@@ -43,6 +45,7 @@ public class MainUI extends UI implements MessageListener {
             case NEW_TURN: setTurn(data.intData); break;
             case GRAIN_BOUGHT: setGrainPriceLabel(data.intData); break;
         }
+        push();
     }
 
     public void setTurn(int value) {

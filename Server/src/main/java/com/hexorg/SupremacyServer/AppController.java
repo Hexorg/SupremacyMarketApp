@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Random;
+
 @RestController
 public class AppController {
     private GameData state;
@@ -24,11 +26,13 @@ public class AppController {
     }
 
     @RequestMapping("/buyGrain")
-    public void buyGrain(@RequestParam(value="amount", defaultValue = "1") int amount) {
+    public int buyGrain(@RequestParam(value="amount", defaultValue = "1") int amount) {
         state.grainBought(amount);
         Message data = new Message();
         data.type = Message.MessageType.GRAIN_BOUGHT;
         data.intData = state.getGrainPrice();
         MessageBus.getInstance().newMessage(data);
+        Random rand = new Random();
+                return rand.nextInt();
     }
 }
