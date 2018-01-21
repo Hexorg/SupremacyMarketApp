@@ -22,7 +22,7 @@ public class MessageBus {
         listeners.add(m);
     }
 
-    public void newMessage(Message data) {
+    public void newMessage(GameData data) {
         for (MessageListener m: listeners) {
             m.processMessage(data);
         }

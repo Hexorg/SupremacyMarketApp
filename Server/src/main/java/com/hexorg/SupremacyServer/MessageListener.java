@@ -1,5 +1,5 @@
 package com.hexorg.SupremacyServer;
 
 public interface MessageListener {
-    public void processMessage(Message data);
+    public void processMessage(GameData data);
 }

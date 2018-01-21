@@ -6,7 +6,7 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
-import org.springframework.context.annotation.Bean;
+import org.ietf.jgss.Oid;
 
 @SpringUI
 @Title("Supremacy Market Server")
@@ -40,11 +40,12 @@ public class MainUI extends UI implements MessageListener {
         content.addComponent(new Button("Try me"));
     }
 
-    public void processMessage(Message data) {
-        switch (data.type) {
-            case NEW_TURN: setTurn(data.intData); break;
-            case GRAIN_BOUGHT: setGrainPriceLabel(data.intData); break;
-        }
+    public void processMessage(GameData data) {
+        setTurn(data.getTurn());
+        setPhase(data.getPhase());
+        setGrainPriceLabel(data.getResourcePrice(GameData.ResourceType.GRAIN));
+        setMineralPrice(data.getResourcePrice(GameData.ResourceType.MINERAL));
+        setOilPriceLabel(data.getResourcePrice(GameData.ResourceType.OIL));
         push();
     }
 

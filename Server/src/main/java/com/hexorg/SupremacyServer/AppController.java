@@ -21,18 +21,37 @@ public class AppController {
     }
 
     @RequestMapping("/gameData")
-    public GameData gameData(@RequestParam(value="name", defaultValue="World") String name) {
+    public GameData gameData() {
         return state;
     }
 
-    @RequestMapping("/buyGrain")
-    public int buyGrain(@RequestParam(value="amount", defaultValue = "1") int amount) {
-        state.grainBought(amount);
-        Message data = new Message();
-        data.type = Message.MessageType.GRAIN_BOUGHT;
-        data.intData = state.getGrainPrice();
-        MessageBus.getInstance().newMessage(data);
-        Random rand = new Random();
-                return rand.nextInt();
+    @RequestMapping("/buy")
+    public GameData buy(@RequestParam(value="type") GameData.ResourceType type,
+                        @RequestParam(value="amount") int amount,
+                        @RequestParam(value="target", defaultValue="MARKET")LedgerEntry.CountryTarget target) {
+        state.buyResource(type, amount);
+        LedgerEntry entry = new LedgerEntry();
+        entry.amount = amount;
+        entry.from = LedgerEntry.CountryTarget.RUSSIA;
+        entry.to = target;
+        entry.type = type;
+        state.addLedgerEntry(entry);
+        MessageBus.getInstance().newMessage(state);
+        return state;
+    }
+
+    @RequestMapping("/sell")
+    public GameData sell(@RequestParam(value="type") GameData.ResourceType type,
+                         @RequestParam(value="amount") int amount,
+                         @RequestParam(value="target", defaultValue="MARKET")LedgerEntry.CountryTarget target) {
+        state.sellResource(type, amount);
+        LedgerEntry entry = new LedgerEntry();
+        entry.amount = amount;
+        entry.from = LedgerEntry.CountryTarget.RUSSIA;
+        entry.to = target;
+        entry.type = type;
+        state.addLedgerEntry(entry);
+        MessageBus.getInstance().newMessage(state);
+        return state;
     }
 }
