@@ -3,6 +3,7 @@ package com.hexorg.SupremacyServer;
 import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Title;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.shared.Registration;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
@@ -14,6 +15,7 @@ import org.ietf.jgss.Oid;
 public class MainUI extends UI implements MessageListener {
     private Label turnLabel, phaseLabel, mineralPriceLabel, oilPriceLabel, grainPriceLabel;
     private Grid<LedgerEntry> ledgerGrid;
+    private Button nextPhaseButton;
 
     @Override
     protected void init(VaadinRequest request) {
@@ -49,20 +51,31 @@ public class MainUI extends UI implements MessageListener {
 
 
         content.addComponent(ledgerGrid);
-        MessageBus.getInstance().newMessage(null);
+        MessageBus.getInstance().initData();
+
+        nextPhaseButton = new Button("Next Phase");
+        nextPhaseButton.addClickListener(clickEvent -> {
+                MessageBus.getInstance().nextPhase();
+        });
+        content.addComponent(nextPhaseButton);
     }
 
     public void processMessage(GameData data) {
-        if (data != null) {
             setTurn(data.getTurn());
             setPhase(data.getPhase());
             setGrainPriceLabel(data.getResourcePrice(GameData.ResourceType.GRAIN));
             setMineralPrice(data.getResourcePrice(GameData.ResourceType.MINERAL));
             setOilPriceLabel(data.getResourcePrice(GameData.ResourceType.OIL));
 
-            ledgerGrid.setItems(data.getLastLedgerEntry());
+            if (data.getLastLedgerEntry() != null)
+                ledgerGrid.setItems(data.getLastLedgerEntry());
             push();
-        }
+    }
+
+    public void nextPhase() { }
+
+    public void initData() {
+
     }
 
     public void setTurn(int value) {

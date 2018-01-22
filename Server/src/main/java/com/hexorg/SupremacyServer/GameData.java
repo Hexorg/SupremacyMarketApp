@@ -24,10 +24,6 @@ public class GameData {
         ledger = new ArrayList<>();
     }
 
-    public void nextTurn() {
-        turn += 1;
-    }
-
     public void addLedgerEntry(LedgerEntry entry) {
         ledger.add(entry);
     }
@@ -38,8 +34,11 @@ public class GameData {
 
     public void nextPhase() {
         int nextPhase = phase.ordinal() + 1;
-        if (nextPhase > Phase.values().length)
+        if (nextPhase > Phase.values().length) {
             nextPhase = 0;
+            turn += 1;
+        }
+
         phase = Phase.values()[nextPhase];
     }
 

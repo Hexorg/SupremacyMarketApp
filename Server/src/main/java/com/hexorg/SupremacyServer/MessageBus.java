@@ -28,4 +28,16 @@ public class MessageBus {
         }
     }
 
+    public void initData() {
+        for (MessageListener m: listeners) {
+            m.initData();
+        }
+    }
+
+    public void nextPhase() {
+        for (MessageListener m: listeners) {
+            m.nextPhase();
+        }
+    }
+
 }

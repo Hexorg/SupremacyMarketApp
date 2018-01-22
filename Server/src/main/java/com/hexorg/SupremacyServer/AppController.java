@@ -59,9 +59,19 @@ public class AppController implements MessageListener {
         return state;
     }
 
+
+
     @Override
     public void processMessage(GameData data) {
-        if (data == null)
-            MessageBus.getInstance().newMessage(state);
+
+    }
+
+    public void initData() {
+        MessageBus.getInstance().newMessage(state);
+    }
+
+    public void nextPhase() {
+        state.nextPhase();
+        MessageBus.getInstance().newMessage(state);
     }
 }
