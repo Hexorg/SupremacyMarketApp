@@ -13,6 +13,7 @@ import org.ietf.jgss.Oid;
 @Push
 public class MainUI extends UI implements MessageListener {
     private Label turnLabel, phaseLabel, mineralPriceLabel, oilPriceLabel, grainPriceLabel;
+    private Grid<LedgerEntry> ledgerGrid;
 
     @Override
     protected void init(VaadinRequest request) {
@@ -37,16 +38,31 @@ public class MainUI extends UI implements MessageListener {
         content.addComponent(oilPriceLabel);
         content.addComponent(grainPriceLabel);
 
-        content.addComponent(new Button("Try me"));
+        ledgerGrid = new Grid<>();
+        //grid.setItems(createItems());
+
+        ledgerGrid.addColumn(LedgerEntry::getFrom).setCaption("From");
+        ledgerGrid.addColumn(LedgerEntry::getTo).setCaption("To");
+        ledgerGrid.addColumn(LedgerEntry::getType).setCaption("Type");
+        ledgerGrid.addColumn(LedgerEntry::getAmount).setCaption("Amount");
+        ledgerGrid.addColumn(LedgerEntry::getPrice).setCaption("Price");
+
+
+        content.addComponent(ledgerGrid);
+        MessageBus.getInstance().newMessage(null);
     }
 
     public void processMessage(GameData data) {
-        setTurn(data.getTurn());
-        setPhase(data.getPhase());
-        setGrainPriceLabel(data.getResourcePrice(GameData.ResourceType.GRAIN));
-        setMineralPrice(data.getResourcePrice(GameData.ResourceType.MINERAL));
-        setOilPriceLabel(data.getResourcePrice(GameData.ResourceType.OIL));
-        push();
+        if (data != null) {
+            setTurn(data.getTurn());
+            setPhase(data.getPhase());
+            setGrainPriceLabel(data.getResourcePrice(GameData.ResourceType.GRAIN));
+            setMineralPrice(data.getResourcePrice(GameData.ResourceType.MINERAL));
+            setOilPriceLabel(data.getResourcePrice(GameData.ResourceType.OIL));
+
+            ledgerGrid.setItems(data.getLastLedgerEntry());
+            push();
+        }
     }
 
     public void setTurn(int value) {

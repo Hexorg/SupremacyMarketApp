@@ -10,13 +10,14 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Random;
 
 @RestController
-public class AppController {
+public class AppController implements MessageListener {
     private GameData state;
     @Autowired
     private ApplicationContext context;
 
     public AppController() {
         state = new GameData();
+        MessageBus.getInstance().addMessageListener(this);
 
     }
 
@@ -29,13 +30,15 @@ public class AppController {
     public GameData buy(@RequestParam(value="type") GameData.ResourceType type,
                         @RequestParam(value="amount") int amount,
                         @RequestParam(value="target", defaultValue="MARKET")LedgerEntry.CountryTarget target) {
-        state.buyResource(type, amount);
+
         LedgerEntry entry = new LedgerEntry();
         entry.amount = amount;
         entry.from = LedgerEntry.CountryTarget.RUSSIA;
         entry.to = target;
         entry.type = type;
+        entry.price = state.getResourcePrice(type);
         state.addLedgerEntry(entry);
+        state.buyResource(type, amount);
         MessageBus.getInstance().newMessage(state);
         return state;
     }
@@ -44,14 +47,21 @@ public class AppController {
     public GameData sell(@RequestParam(value="type") GameData.ResourceType type,
                          @RequestParam(value="amount") int amount,
                          @RequestParam(value="target", defaultValue="MARKET")LedgerEntry.CountryTarget target) {
-        state.sellResource(type, amount);
         LedgerEntry entry = new LedgerEntry();
         entry.amount = amount;
         entry.from = LedgerEntry.CountryTarget.RUSSIA;
         entry.to = target;
         entry.type = type;
+        entry.price = state.getResourcePrice(type);
         state.addLedgerEntry(entry);
+        state.sellResource(type, amount);
         MessageBus.getInstance().newMessage(state);
         return state;
+    }
+
+    @Override
+    public void processMessage(GameData data) {
+        if (data == null)
+            MessageBus.getInstance().newMessage(state);
     }
 }

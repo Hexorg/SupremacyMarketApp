@@ -16,7 +16,7 @@ public class GameData {
     public GameData() {
         phase = Phase.UPKEEP;
         turn = 1;
-        Random rand = new Random();
+        Random rand = new Random(System.currentTimeMillis());
         resourcePrices = new int[ResourceType.values().length];
         for (int i=0; i<resourcePrices.length; i++) {
             resourcePrices[i] = rand.nextInt(marketPricing.length);
@@ -68,5 +68,10 @@ public class GameData {
 
     public int getOilPrice() { return getResourcePrice(ResourceType.OIL); }
 
-    public LedgerEntry getLastLedgerEntry() { return ledger.get(ledger.size()-1); }
+    public LedgerEntry getLastLedgerEntry() {
+        if (ledger.size() != 0)
+            return ledger.get(ledger.size()-1);
+        else
+            return null;
+    }
 }
